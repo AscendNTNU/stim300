@@ -52,6 +52,9 @@ int main(int argc, char** argv)
 
   ROS_INFO("STIM300 IMU initialized successfully");
 
+  //driver_stim300.enterServiceMode();
+  //driver_stim300.exitServiceMode();
+
   while (ros::ok())
   {
     sensor_msgs::Imu stim300msg = imu_msg_template;

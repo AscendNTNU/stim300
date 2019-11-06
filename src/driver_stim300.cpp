@@ -166,3 +166,93 @@ bool DriverStim300::verifyChecksum(std::vector<uint8_t>::const_iterator begin, s
 
   return crc_32_calculator.checksum() == expected_CRC;
 }
+
+void DriverStim300::enterServiceMode() {
+  if (mode_ != Mode::Service) {
+    uint8_t byte[12];
+    byte[0] = 'S';
+    byte[1] = 'E';
+    byte[2] = 'R';
+    byte[3] = 'V';
+    byte[4] = 'I';
+    byte[5] = 'C';
+    byte[6] = 'E';
+    byte[7] = 'M';
+    byte[8] = 'O';
+    byte[9] = 'D';
+    byte[10] = 'E';
+    byte[11] = '\r';
+
+    std::cout << "Entering service mode" << std::endl;
+    serial_driver_.writeByte(byte, sizeof(byte));
+    sleep(1);
+    mode_ = Mode::Service;
+  }
+}
+
+void DriverStim300::exitServiceMode() {
+  if (mode_ == Mode::Service) {
+    uint8_t save_byte[2];
+    save_byte[0] = 's';
+    save_byte[1] = '\r';
+    std::cout << "Saving configuration" << std::endl;
+    serial_driver_.writeByte(save_byte, sizeof(save_byte));
+
+    sleep(1);
+
+    uint8_t confirmation_byte[2];
+    confirmation_byte[0] = 'Y';
+    confirmation_byte[1] = '\r';
+    std::cout << "Confirming configuration" << std::endl;
+    serial_driver_.writeByte(confirmation_byte, sizeof(confirmation_byte));
+
+    sleep(1);
+
+    uint8_t exit_byte[4];
+    exit_byte[0] = 'x';
+    exit_byte[1] = ' ';
+    exit_byte[2] = 'N';
+    exit_byte[3] = '\r';
+    std::cout << "Exiting service mode" << std::endl;
+    serial_driver_.writeByte(exit_byte, sizeof(exit_byte));
+
+    sleep(1);
+
+    mode_ = Mode::Normal;
+  }
+}
+
+void DriverStim300::setSampleRate(int rate) {
+  if (rate < 0 || rate > 5) {
+    std::cout << "Chosen sample rate outside valid values, must be in range [0,5]" << std::endl;
+    return;
+  }
+
+  if (mode_ != Mode::Service) {
+    enterServiceMode();
+  }
+
+  uint8_t byte[4];
+  byte[0] = 'm';
+  byte[1] = ' ';
+  byte[2] = static_cast<char>(rate);
+  byte[3] = '\r';
+
+  std::cout << "Setting sample rate config: " << rate << std::endl;
+  serial_driver_.writeByte(byte, sizeof(byte));
+
+  sleep(1);
+}
+
+// void DriverStim300::setExternalTrigger() {
+//   if (mode_ != Mode::Service) {
+//     enterServiceMode();
+//   }
+
+//   uint8_t byte[4];
+//   byte[0] = 'm';
+//   byte[1] = ' ';
+//   byte[2] = '5';
+//   byte[3] = '\r';
+// }
+

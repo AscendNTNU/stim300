@@ -23,6 +23,8 @@ public:
 
   void writeByte(uint8_t byte) override;
 
+  void writeByte(uint8_t* byte, size_t size) override;
+
   bool readByte(uint8_t& byte) override;
 
 private:

@@ -125,6 +125,11 @@ void SerialUnix::writeByte(uint8_t byte)
   ::write(file_handle_, &byte, 1);
 }
 
+void SerialUnix::writeByte(uint8_t* byte, size_t size)
+{
+  ::write(file_handle_, byte, size);
+}
+
 bool SerialUnix::readByte(uint8_t& byte)
 {
   return (read(file_handle_, &byte, 1) > 0);

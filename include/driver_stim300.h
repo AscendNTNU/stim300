@@ -8,6 +8,7 @@
 #include "../src/serial_driver.h"
 #include <vector>
 #include <assert.h>
+#include <iostream>
 
 class DriverStim300
 {
@@ -32,6 +33,11 @@ public:
   bool isSensorStatusGood() const;
   uint8_t getInternalMeasurmentCounter() const;
   bool processPacket();
+
+  void enterServiceMode();
+  void exitServiceMode();
+  void setSampleRate(int rate);
+  //void setExternalTrigger();
 
 private:
   enum class Mode : uint8_t
