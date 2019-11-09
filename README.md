@@ -77,3 +77,5 @@ This will show a list on available commands including how to go back to normal m
     c
 
  will perform a system check.
+
+ ### Turn on external triggering
