@@ -19,6 +19,7 @@ public:
   virtual void close() = 0;
   virtual bool readByte(uint8_t& byte) = 0;
   virtual void writeByte(uint8_t byte) = 0;
+  virtual void writeBytes(uint64_t bytes, size_t size) = 0;
   virtual ~SerialDriver() = default;
 };
 
