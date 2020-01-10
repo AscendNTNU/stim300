@@ -27,6 +27,8 @@ public:
 
   bool readByte(uint8_t& byte) override;
 
+  bool readBytes(uint64_t& bytes, size_t size) override;
+
 private:
   int file_handle_;
   struct termios config_;

@@ -1,4 +1,5 @@
 #include "driver_stim300.h"
+#include "driver_arduino.h"
 #include "serial_unix.h"
 
 #include "ros/ros.h"
@@ -15,20 +16,21 @@ int main(int argc, char** argv)
 
   ros::NodeHandle node;
 
-  std::string device_name;
-  std::string arduino_name;
+  std::string stim_port;
+  std::string arduino_port;
   double stanardDeivationOfGyro{ 0 };
   double stanardDeviationOfAcc{ 0 };
   double varianceOfGyro{ 0 };
   double varianceOfAcc{ 0 };
   int sampleRate{ 0 };
 
-  node.param<std::string>("device_name", device_name, "/dev/ttyUSB0");
-  SerialUnix serial_stim(device_name);
-  DriverStim300 driver_stim300(serial_stim);
+  // node.param<std::string>("stim_port", stim_port, "/dev/ttyUSB0");
+  // SerialUnix serial_stim(stim_port);
+  // DriverStim300 driver_stim300(serial_stim);
 
-  node.param<std::string>("arduino_name", arduino_name, "/dev/ttyUSB1");
-  //SerialUnix serial_arduino(arduino_name); // THIS MAY NOT BE THE ACTUAL PORT
+  node.param<std::string>("arduino_port", arduino_port, "/dev/ttyUSB1");
+  SerialUnix serial_arduino(arduino_port); // THIS MAY NOT BE THE ACTUAL PORT
+  DriverArduino driver_arduino(serial_arduino);
 
   node.param("stanard_deviation_of_gyro", stanardDeivationOfGyro, averageAllanVarianceOfGyro);
   node.param("stanard_deviation_of_acc", stanardDeviationOfAcc, averageAllanVarianceOfAcc);
@@ -56,43 +58,44 @@ int main(int argc, char** argv)
 
   ROS_INFO("STIM300 IMU initialized successfully");
 
-  // uint64_t current_time_ns = ros::Time::now().toNSec();
-  // serial_arduino.writeBytes(current_time_ns, 8);
-  // ROS_INFO("SENT ros::Time::now() to MCU");
+  // driver_arduino.sendCurrentTimeNSec(ros::Time::now());
+
+  driver_arduino.testArduinoCom();
 
   // while (ros::ok())
   // {
-  //   sensor_msgs::Imu stim300msg = imu_msg_template;
+  //   driver_arduino.processPacket();
+  // //   sensor_msgs::Imu stim300msg = imu_msg_template;
 
-  //   stim300msg.header.stamp = ros::Time::now();
+  // //   stim300msg.header.stamp = ros::Time::now();
 
-  //   if (driver_stim300.processPacket())
-  //   {
-  //     if (!driver_stim300.isChecksumGood())
-  //     {
-  //       ROS_WARN("stim300 CRC error ");
-  //       continue;
-  //     }
+  // //   if (driver_stim300.processPacket())
+  // //   {
+  // //     if (!driver_stim300.isChecksumGood())
+  // //     {
+  // //       ROS_WARN("stim300 CRC error ");
+  // //       continue;
+  // //     }
 
-  //     if (!driver_stim300.isSensorStatusGood())
-  //     {
-  //       ROS_WARN("STIM300: Internal hardware error");
-  //       continue;
-  //     }
+  // //     if (!driver_stim300.isSensorStatusGood())
+  // //     {
+  // //       ROS_WARN("STIM300: Internal hardware error");
+  // //       continue;
+  // //     }
 
-  //     stim300msg.linear_acceleration.x = driver_stim300.getAccX() + 0.0023;
-  //     stim300msg.linear_acceleration.y = driver_stim300.getAccY() + 0.05;
-  //     stim300msg.linear_acceleration.z = driver_stim300.getAccZ() + 0.027;
-  //     stim300msg.angular_velocity.x = driver_stim300.getGyroX();
-  //     stim300msg.angular_velocity.y = driver_stim300.getGyroY();
-  //     stim300msg.angular_velocity.z = driver_stim300.getGyroZ();
-  //     imuSensorPublisher.publish(stim300msg);
+  // //     stim300msg.linear_acceleration.x = driver_stim300.getAccX() + 0.0023;
+  // //     stim300msg.linear_acceleration.y = driver_stim300.getAccY() + 0.05;
+  // //     stim300msg.linear_acceleration.z = driver_stim300.getAccZ() + 0.027;
+  // //     stim300msg.angular_velocity.x = driver_stim300.getGyroX();
+  // //     stim300msg.angular_velocity.y = driver_stim300.getGyroY();
+  // //     stim300msg.angular_velocity.z = driver_stim300.getGyroZ();
+  // //     imuSensorPublisher.publish(stim300msg);
 
-  //   }
+  // //   }
 
-  //   loop_rate.sleep();
+  //    loop_rate.sleep();
 
-  //   ros::spinOnce();
+  //    ros::spinOnce();
   // }
   return 0;
 }

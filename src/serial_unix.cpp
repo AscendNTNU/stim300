@@ -134,3 +134,8 @@ void SerialUnix::writeBytes(uint64_t bytes, size_t size)
 {
   ::write(file_handle_, &bytes, size);
 }
+
+bool SerialUnix::readBytes(uint64_t& bytes, size_t size)
+{
+  return (read(file_handle_, &bytes, size) > 0);
+}

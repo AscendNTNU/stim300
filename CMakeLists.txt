@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 14)
 add_library(stim300_driver_lib
         src/driver_stim300.cpp
         src/datagram_parser.cpp
-        src/serial_unix.cpp)
+        src/serial_unix.cpp
+	src/driver_arduino.cpp)
 
 target_include_directories(stim300_driver_lib
         PUBLIC
@@ -23,6 +24,11 @@ find_package(catkin REQUIRED COMPONENTS
         )
 catkin_package(
         CATKIN_DEPENDS sensor_msgs
+)
+
+include_directories(
+	include
+	${catkin_INCLUDE_DIRS}
 )
 
 add_executable(stim300_driver_node src/stim300_driver_node.cpp)
