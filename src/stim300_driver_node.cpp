@@ -1,6 +1,7 @@
 #include "driver_stim300.h"
 #include "driver_arduino.h"
 #include "serial_unix.h"
+#include <serial/serial.h>
 
 #include "ros/ros.h"
 #include "sensor_msgs/Imu.h"
@@ -32,6 +33,14 @@ int main(int argc, char** argv)
   SerialUnix serial_arduino(arduino_port); // THIS MAY NOT BE THE ACTUAL PORT
   DriverArduino driver_arduino(serial_arduino);
 
+  serial::Serial ser;
+  // ser.setPort("/dev/ttyACM0");
+  // ser.setBaudrate(115200);
+  // serial::Timeout to = serial::Timeout::simpleTimeout(1500);
+  // ser.setTimeout(to);
+  // ser.open();
+
+
   node.param("stanard_deviation_of_gyro", stanardDeivationOfGyro, averageAllanVarianceOfGyro);
   node.param("stanard_deviation_of_acc", stanardDeviationOfAcc, averageAllanVarianceOfAcc);
   node.param("sample_rate", sampleRate, defaultSampleRate);
@@ -54,13 +63,69 @@ int main(int argc, char** argv)
 
   ros::Publisher imuSensorPublisher = node.advertise<sensor_msgs::Imu>("imu/data_raw", 1000);
 
-  ros::Rate loop_rate(1000);
+  ros::Rate loop_rate(2);
+  
+    driver_arduino.testArduinoCom();
 
-  ROS_INFO("STIM300 IMU initialized successfully");
+  ROS_INFO("STIM300 IMU initialized successfully");driver_arduino.sendCurrentTimeNSec(ros::Time::now());
+  while (ros::ok())
+  {
+    loop_rate.sleep();
+  }
 
-  // driver_arduino.sendCurrentTimeNSec(ros::Time::now());
+  // std::string read;
+  // std::string port{ "/dev/ttyACM0" };
+  // std::string input;
 
-  driver_arduino.testArduinoCom();
+  // while (ros::ok())
+  // {
+  // try
+  //   {
+  //     ROS_WARN("Tries...");
+  //     if (ser.isOpen())
+  //     {
+  //       ROS_WARN("ser is open");
+  //       // read string from serial device
+  //       if(ser.available())
+  //       {
+  //         read = ser.read(ser.available());
+  //         ROS_DEBUG("read %i new characters from serial port, adding to %i characters of old input.", (int)read.size(), (int)input.size());
+  //         input += read;
+  //         break;
+  //       //   while (input.length() >= 36) // while there might be a complete package in input
+  //       //   {
+  //       // }
+  //     }
+  //     else
+  //     {
+  //       // try and open the serial port
+  //       try
+  //       {
+  //         ser.close();
+  //         ser.setPort(port);
+  //         ser.setBaudrate(115200);
+  //         serial::Timeout to = serial::Timeout::simpleTimeout(1500);
+  //         ser.setTimeout(to);
+  //         ser.open();
+  //       }
+  //       catch (serial::IOException& e)
+  //       {
+  //         ROS_ERROR_STREAM("Unable to open serial port " << ser.getPort() << ". Trying again in 5 seconds.");
+  //         ros::Duration(5).sleep();
+  //       }
+
+  //       if(ser.isOpen())
+  //       {
+  //         ROS_DEBUG_STREAM("Serial port " << ser.getPort() << " initialized and opened.");
+  //       }
+  //     }
+  //     }
+  //   }
+  //   catch (serial::IOException& e)
+  //   {
+  //     ROS_ERROR_STREAM("Error reading from the serial port " << ser.getPort() << ". Closing connection.");
+  //     ser.close();
+  //   }
 
   // while (ros::ok())
   // {
@@ -97,5 +162,7 @@ int main(int argc, char** argv)
 
   //    ros::spinOnce();
   // }
+  //}
+  // ROS_WARN_STREAM("Received " << input << " from Arduino.");
   return 0;
 }

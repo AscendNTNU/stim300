@@ -21,6 +21,7 @@ target_link_libraries(stim300_driver_lib)
 find_package(catkin REQUIRED COMPONENTS
         roscpp
         sensor_msgs
+        serial
         )
 catkin_package(
         CATKIN_DEPENDS sensor_msgs

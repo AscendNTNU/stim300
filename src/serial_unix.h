@@ -23,11 +23,11 @@ public:
 
   void writeByte(uint8_t byte) override;
   
-  void writeBytes(uint64_t bytes, size_t size) override;
+  void writeBytes(uint8_t* bytes, size_t size) override;
 
   bool readByte(uint8_t& byte) override;
 
-  bool readBytes(uint64_t& bytes, size_t size) override;
+  bool readBytes(uint8_t& bytes, size_t size) override;
 
 private:
   int file_handle_;
