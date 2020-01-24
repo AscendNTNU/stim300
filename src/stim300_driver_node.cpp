@@ -63,13 +63,13 @@ int main(int argc, char** argv)
 
   ros::Publisher imuSensorPublisher = node.advertise<sensor_msgs::Imu>("imu/data_raw", 1000);
 
-  ros::Rate loop_rate(2);
-  
-    driver_arduino.testArduinoCom();
+  ros::Rate loop_rate(250);
+
 
   ROS_INFO("STIM300 IMU initialized successfully");driver_arduino.sendCurrentTimeNSec(ros::Time::now());
   while (ros::ok())
   {
+    driver_arduino.testArduinoCom();
     loop_rate.sleep();
   }
 
